@@ -23,7 +23,7 @@ local function alarm ()
 	--check hull temperature
 	local t = Game.player:GetHullTemperature()
 	if t and t > 0.8 and not alreadyAlertedTemp then
-		ui.playSfx("alarm_emer", 1.0, 1.0)
+		ui.playSfx("alarm_emer")
 		alreadyAlertedTemp = true;
 	end
 	if t < 0.8 and alreadyAlertedTemp then
@@ -36,7 +36,7 @@ local function alarm ()
 	local maxDv = Game.player:GetMaxDeltaV()
 	local warningRatio = remainingFuel - currentSpeed
 	if warningRatio < (maxDv / 10) and not alreadyAlertedFuel then
-		ui.playSfx("fuel_low", 1.0, 1.0)
+		ui.playSfx("fuel_low")
 		alreadyAlertedFuel = true
 	end
 	if warningRatio > (maxDv / 10) and alreadyAlertedFuel then
@@ -48,7 +48,7 @@ local function alarm ()
 	if frame then
 		local pressure = frame:GetAtmosphericState(Game.player)
 		if pressure and pressure > 9 and not alreadyAlertedPres then
-			ui.playSfx("alarm_generic1", 1.0, 1.0)
+			ui.playSfx("alarm_generic1")
 			alreadyAlertedPres = true
 		end
 		if not pressure or pressure < 9 and alreadyAlertedPres then
@@ -103,7 +103,7 @@ local function alarm ()
 			end
 			if not alreadyAlertedDescent then
 				-- FIXME: alarm_descent is *REALLY* loud. Needs to be properly mixed.
-				ui.playSfx("alarm_descent", 0.2, 0.2)
+				ui.playSfx("alarm_descent", 0.2)
 				alreadyAlertedDescent = true
 			end
 
@@ -116,7 +116,7 @@ local function alarm ()
 				ui.addIcon(uiPos, icons.impact_warning, colors.alertYellow, iconSize, ui.anchor.center, ui.anchor.center, lui.HUD_WARNING_IMPACT)
 			end
 			if not alreadyAlertedImpact then
-				ui.playSfx("impact_chime", 1.0, 1.0)
+				ui.playSfx("impact_chime")
 				alreadyAlertedImpact = true
 			end
 

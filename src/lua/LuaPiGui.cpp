@@ -3000,9 +3000,8 @@ static int l_pigui_play_sfx(lua_State *l)
 {
 	PROFILE_SCOPED()
 	std::string name = LuaPull<std::string>(l, 1);
-	double left = LuaPull<float>(l, 2, 1.0);
-	double right = LuaPull<float>(l, 3, left);
-	Sound::PlaySfx(name.c_str(), left, right, false);
+	double volume = LuaPull<float>(l, 2, 1.0);
+	Sound::PlaySfx(name.c_str(), static_cast<float>(volume));
 	return 0;
 }
 

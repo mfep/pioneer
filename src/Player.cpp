@@ -138,7 +138,7 @@ Missile *Player::SpawnMissile(const MissileDef &def, Body *target)
 {
 	Missile *m = Ship::SpawnMissile(def, target);
 	if (m)
-		Sound::PlaySfx("Missile_launch", 1.0f, 1.0f, 0);
+		Sound::PlaySfx("Missile_launch");
 	return m;
 }
 
@@ -163,12 +163,12 @@ void Player::SetAlertState(Ship::AlertState as)
 
 	case ALERT_SHIP_FIRING:
 		Pi::game->log->Add(Lang::LASER_FIRE_DETECTED);
-		Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
+		Sound::PlaySfx("warning", 0.2f);
 		break;
 
 	case ALERT_MISSILE_DETECTED:
 		Pi::game->log->Add(Lang::MISSILE_DETECTED);
-		Sound::PlaySfx("warning", 0.2f, 0.2f, 0);
+		Sound::PlaySfx("warning", 0.2f);
 		break;
 	}
 

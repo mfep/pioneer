@@ -149,7 +149,7 @@ void Sound::AlAudioBackend::Pause(int on)
 	}
 }
 
-Sound::AudioBackend::eventid Sound::AlAudioBackend::Play(std::string_view key, const float volume_left, const float volume_right, const Op op)
+Sound::AudioBackend::eventid Sound::AlAudioBackend::Play(std::string_view key, const float volume, const Op op)
 {
 	const std::string key_str(key);
 	auto sample_it = m_samples.find(key_str);
@@ -159,7 +159,7 @@ Sound::AudioBackend::eventid Sound::AlAudioBackend::Play(std::string_view key, c
 	}
 	auto it = m_events.emplace(++m_next_event_id, sample_it->second).first;
 	it->second.SetOp(op);
-	it->second.SetGain(volume_left * m_sfxVolume, volume_right * m_sfxVolume);
+	it->second.SetGain(volume * m_sfxVolume, volume * m_sfxVolume);
 	if (!m_paused) {
 		CHECK_OPENAL_ERROR(alSourcePlay, it->second.GetSource());
 	}

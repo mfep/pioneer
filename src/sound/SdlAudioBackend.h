@@ -27,7 +27,7 @@ namespace Sound {
 
 		void Pause(int on) override;
 
-		eventid Play(std::string_view key, const float volume_left, const float volume_right, const Op op) override;
+		eventid Play(std::string_view key, const float volume, const Op op) override;
 		void BodyMakeNoise(const Body *b, std::string_view key, float vol) override;
 
 		void SetMasterVolume(float vol) override { m_masterVolume = vol; }
@@ -59,6 +59,8 @@ namespace Sound {
 		SoundEvent *GetEvent(eventid id);
 		void DestroyEvent(SoundEvent *ev);
 		SoundEvent &FindFreeEventForSample(const Sample &sample);
+		eventid Play(std::string_view key, const float volume_left, const float volume_right, const Op op);
+
 
 		template <int T_channels, int T_upsample>
 		void fill_audio_1stream(float *buffer, int len, int stream_num);

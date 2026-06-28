@@ -38,7 +38,7 @@ namespace Sound {
 
 		virtual void Pause(int on) = 0;
 
-		virtual eventid Play(std::string_view key, const float volume_left, const float volume_right, const Op op) = 0;
+		virtual eventid Play(std::string_view key, const float volume, const Op op) = 0;
 		virtual void BodyMakeNoise(const Body *b, std::string_view key, float vol) = 0;
 
 		virtual void SetMasterVolume(float vol) = 0;

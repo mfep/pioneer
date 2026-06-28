@@ -86,9 +86,9 @@ namespace Sound {
 		m_backend->BodyMakeNoise(b, sfx, vol);
 	}
 
-	void PlaySfx(const char *fx, const float volume_left, const float volume_right, const Op op)
+	void PlaySfx(const char *fx, const float volume, const Op op)
 	{
-		m_backend->Play(fx, volume_left, volume_right, op);
+		m_backend->Play(fx, volume, op);
 	}
 
 	void DestroyAllEvents()
@@ -299,7 +299,7 @@ namespace Sound {
 	void Event::Play(const char *fx, float volume_left, float volume_right, Op op)
 	{
 		Stop();
-		eid = m_backend->Play(fx, volume_left, volume_right, op);
+		eid = m_backend->Play(fx, volume_left, op);
 	}
 
 	void Event::PlayMusic(const char *fx, float volume, float fadeDelta, bool repeat, Event *fadeOut)
@@ -313,7 +313,7 @@ namespace Sound {
 		}
 		Stop();
 		float start = fadeDelta ? 0.0f : volume;
-		eid = m_backend->Play(fx, start, start, repeat ? Sound::OP_REPEAT : 0);
+		eid = m_backend->Play(fx, start, repeat ? Sound::OP_REPEAT : 0);
 		if (fadeDelta) {
 			VolumeAnimate(volume, volume, fadeDelta, fadeDelta);
 		}

@@ -177,6 +177,11 @@ void Sound::SdlAudioBackend::Pause(int on)
 	SDL_PauseAudioDevice(m_audioDevice, on);
 }
 
+Sound::AudioBackend::eventid Sound::SdlAudioBackend::Play(std::string_view key, const float volume, const Op op)
+{
+	return Play(key, volume, volume, op);
+}
+
 /*
  * Volume should be 0-65535
  */

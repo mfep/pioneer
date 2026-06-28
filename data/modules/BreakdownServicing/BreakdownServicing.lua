@@ -293,9 +293,9 @@ local onEnterSystem = function (ship)
 		else
 			-- Destroy the engine
 			if engine.fuel.name == 'military_fuel' then
-				pigui.playSfx("Hyperdrive_Breakdown_Military", 1.0, 1.0)
+				pigui.playSfx("Hyperdrive_Breakdown_Military")
 			else
-				pigui.playSfx("Hyperdrive_Breakdown", 1.0, 1.0)
+				pigui.playSfx("Hyperdrive_Breakdown")
 			end
 
 			ship:GetComponent('EquipSet'):Remove(engine)

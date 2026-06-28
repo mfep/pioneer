@@ -35,7 +35,7 @@ namespace Sound {
 
 		void Pause(int on) override;
 
-		eventid Play(std::string_view key, const float volume_left, const float volume_right, const Op op) override;
+		eventid Play(std::string_view key, const float volume, const Op op) override;
 		void BodyMakeNoise(const Body *b, std::string_view key, float vol) override;
 
 		void SetMasterVolume(float vol) override;

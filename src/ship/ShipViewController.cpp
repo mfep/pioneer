@@ -190,7 +190,7 @@ void ShipViewController::ChangeInternalCameraMode(InternalCameraController::Mode
 {
 	if (m_internalCameraController->GetMode() != m)
 		// TODO: find a way around this, or move it to a dedicated system.
-		Sound::PlaySfx("Click", 0.3, 0.3, false);
+		Sound::PlaySfx("Click", 0.3);
 	m_internalCameraController->SetMode(m);
 	Pi::player->GetPlayerController()->SetMouseForRearView(m_camType == CAM_INTERNAL && m_internalCameraController->GetMode() == InternalCameraController::MODE_REAR);
 }

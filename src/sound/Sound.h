@@ -56,8 +56,7 @@ namespace Sound {
 	void DestroyAllEvents();
 	void DestroyAllEventsExceptMusic();
 	void Pause(int on);
-	void PlaySfx(const char *fx, const float volume_left, const float volume_right, const Op op);
-	inline static void PlaySfx(const char *fx) { PlaySfx(fx, 1.0f, 1.0f, 0); }
+	void PlaySfx(const char *fx, const float volume = 1.F, const Op op = 0);
 	void CalculateStereo(const Body *b, float vol, float *volLeftOut, float *volRightOut);
 	void BodyMakeNoise(const Body *b, const char *fx, float vol);
 	void SetMasterVolume(const float vol);
