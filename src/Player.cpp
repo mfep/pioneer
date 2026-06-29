@@ -127,7 +127,7 @@ bool Player::SetWheelState(bool down)
 {
 	bool did = Ship::SetWheelState(down);
 	if (did) {
-		s_soundUndercarriage.Play(down ? "UC_out" : "UC_in", 1.0f, 1.0f, 0);
+		s_soundUndercarriage.Play(down ? "UC_out" : "UC_in");
 		GetPlayerController()->SetCruiseDirection(down ? PlayerShipController::CRUISE_UP : PlayerShipController::CRUISE_FWD);
 	}
 	return did;
@@ -307,8 +307,8 @@ void Player::StaticUpdate(const float timeStep)
 	if (playCreak) {
 		if (!m_creakSound.IsPlaying()) {
 			float creakVol = fmax(0.f, fmin(float((m_atmosJerk.Length() - 50) * 0.05f), 0.3f));
-			m_creakSound.Play("metal_creaking", creakVol, creakVol, Sound::OP_REPEAT);
-			m_creakSound.VolumeAnimate(creakVol, creakVol, 0.3f, 0.3f);
+			m_creakSound.Play("metal_creaking", creakVol, Sound::OP_REPEAT);
+			m_creakSound.VolumeAnimate(creakVol, 0.3f);
 		}
 	} else if (m_creakSound.IsPlaying()) {
 		m_creakSound.FadeOut(1.5f);

@@ -30,8 +30,8 @@ namespace Sound {
 		bool EventStop(eventid eid) override;
 		bool IsEventPlaying(eventid eid) override;
 		bool EventSetOp(eventid eid, Op op) override;
-		bool EventVolumeAnimate(eventid eid, const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2) override;
-		bool EventSetVolume(eventid eid, const float vol_left, const float vol_right) override;
+		bool EventVolumeAnimate(eventid eid, const float targetVol, const float dv_dt) override;
+		bool EventSetVolume(eventid eid, const float vol) override;
 
 		void Pause(int on) override;
 
@@ -64,11 +64,9 @@ namespace Sound {
 			bool IsDone() const;
 			void Update(float delta_t);
 			void SetGain(float gain);
-			void SetGain(float gainL, float gainR);
 			void SetVolume(float vol);
 			void SetOp(Op op);
 			void SetTargetGain(float gain, float rate);
-			void SetTargetGain(float gainL, float gainR, float rate);
 			bool IsMusic() const { return is_music; }
 
 		private:
@@ -80,11 +78,8 @@ namespace Sound {
 			int channels;
 			int samplerate;
 			float target_gain;
-			float target_pan;
 			float current_gain;
-			float current_pan;
 			float fade_rate;
-			float pan_rate;
 			float volume;
 			bool streaming_finished;
 			bool is_music;

@@ -22,8 +22,8 @@ namespace Sound {
 		bool EventStop(eventid eid) override;
 		bool IsEventPlaying(eventid eid) override;
 		bool EventSetOp(eventid eid, Op op) override;
-		bool EventVolumeAnimate(eventid eid, const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2) override;
-		bool EventSetVolume(eventid eid, const float vol_left, const float vol_right) override;
+		bool EventVolumeAnimate(eventid eid, const float targetVol, const float dv_dt) override;
+		bool EventSetVolume(eventid eid, const float vol) override;
 
 		void Pause(int on) override;
 

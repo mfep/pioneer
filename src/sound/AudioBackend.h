@@ -33,8 +33,8 @@ namespace Sound {
 		virtual bool EventStop(eventid eid) = 0;
 		virtual bool IsEventPlaying(eventid eid) = 0;
 		virtual bool EventSetOp(eventid eid, Op op) = 0;
-		virtual bool EventVolumeAnimate(eventid eid, const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2) = 0;
-		virtual bool EventSetVolume(eventid eid, const float vol_left, const float vol_right) = 0;
+		virtual bool EventVolumeAnimate(eventid eid, const float targetVol, const float dv_dt) = 0;
+		virtual bool EventSetVolume(eventid eid, const float vol) = 0;
 
 		virtual void Pause(int on) = 0;
 

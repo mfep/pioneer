@@ -4,6 +4,8 @@
 #ifndef __SOUND_H
 #define __SOUND_H
 
+#include "vector3.h"
+
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -22,23 +24,13 @@ namespace Sound {
 	public:
 		Event() :
 			eid(0) {}
-		void Play(const char *fx, const float volume_left, const float volume_right, Op op);
-		void Play(const char *fx) { Play(fx, 1.0f, 1.0f, 0); }
+		void Play(const char *fx, const float volume = 1.f, Op op = 0);
 		void PlayMusic(const char *fx, float volume, float fadeDelta, bool repeat, Event *fadeOut = nullptr);
 		bool Stop();
 		bool IsPlaying() const;
 		bool SetOp(Op op);
-		bool VolumeAnimate(const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2);
-		bool VolumeAnimate(const float targetVols[2], const float dv_dt[2])
-		{
-			return VolumeAnimate(targetVols[0], targetVols[1],
-				dv_dt[0], dv_dt[1]);
-		}
-		bool SetVolume(const float vol_left, const float vol_right);
-		bool SetVolume(const float vol)
-		{
-			return SetVolume(vol, vol);
-		}
+		bool VolumeAnimate(const float targetVol, const float dv_dt);
+		bool SetVolume(const float vol);
 		bool FadeOut(float dv_dt, Op op = 0);
 
 	private:

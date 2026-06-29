@@ -24,16 +24,6 @@
 
 #define CHECK_OPENAL_ERROR(fn, ...) CHECK_OPENAL_ERROR_IMPL(__FILE__, __LINE__, fn, __VA_ARGS__)
 
-namespace {
-	float calculate_pan(float left, float right)
-	{
-		if (left == 0.f && right == 0.f) {
-			return 0.f;
-		}
-		return (right - left) / (right + left);
-	}
-} //namespace
-
 Sound::AlAudioBackend::AlAudioBackend()
 {
 	m_device = alcOpenDevice(nullptr);
@@ -114,23 +104,23 @@ bool Sound::AlAudioBackend::EventSetOp(eventid eid, Op op)
 	return true;
 }
 
-bool Sound::AlAudioBackend::EventVolumeAnimate(eventid eid, const float targetVol1, const float targetVol2, const float dv_dt1, const float /*dv_dt2*/)
+bool Sound::AlAudioBackend::EventVolumeAnimate(eventid eid, const float targetVol, const float dv_dt)
 {
 	auto it = m_events.find(eid);
 	if (it == m_events.end()) {
 		return false;
 	}
-	it->second.SetTargetGain(targetVol1, targetVol2, dv_dt1);
+	it->second.SetTargetGain(targetVol, dv_dt);
 	return true;
 }
 
-bool Sound::AlAudioBackend::EventSetVolume(eventid eid, const float vol_left, const float vol_right)
+bool Sound::AlAudioBackend::EventSetVolume(eventid eid, const float vol)
 {
 	auto it = m_events.find(eid);
 	if (it == m_events.end()) {
 		return false;
 	}
-	it->second.SetGain(vol_left, vol_right);
+	it->second.SetGain(vol);
 	return true;
 }
 
@@ -159,7 +149,7 @@ Sound::AudioBackend::eventid Sound::AlAudioBackend::Play(std::string_view key, c
 	}
 	auto it = m_events.emplace(++m_next_event_id, sample_it->second).first;
 	it->second.SetOp(op);
-	it->second.SetGain(volume * m_sfxVolume, volume * m_sfxVolume);
+	it->second.SetGain(volume * m_sfxVolume);
 	if (!m_paused) {
 		CHECK_OPENAL_ERROR(alSourcePlay, it->second.GetSource());
 	}
@@ -272,7 +262,7 @@ void Sound::AlAudioBackend::EnableBinaural(bool enabled)
 }
 
 Sound::AlAudioBackend::SoundEvent::SoundEvent(const Sample &sample) :
-	channels(sample.channels), samplerate(sample.samplerate), target_gain(1.F), target_pan(0.F), current_gain(1.F), current_pan(0.F), fade_rate(0.F), pan_rate(0.F), volume(1.F), streaming_finished(false), is_music(sample.isMusic), op(0)
+	channels(sample.channels), samplerate(sample.samplerate), target_gain(1.F), current_gain(1.F), fade_rate(0.F), volume(1.F), streaming_finished(false), is_music(sample.isMusic), op(0)
 {
 	CHECK_OPENAL_ERROR(alGenSources, 1, &source);
 	CHECK_OPENAL_ERROR(alSourcei, source, AL_REFERENCE_DISTANCE, 1);
@@ -409,38 +399,22 @@ void Sound::AlAudioBackend::SoundEvent::Update(float delta_t)
 	}
 	if (fade_rate != 0.f) {
 		current_gain = current_gain + fade_rate * delta_t;
-		current_pan = current_pan + pan_rate * delta_t;
 		if ((fade_rate > 0.F && current_gain >= target_gain) || (fade_rate < 0.F && current_gain < target_gain)) {
 			if (op & OP_STOP_AT_TARGET_VOLUME) {
 				CHECK_OPENAL_ERROR(alSourceStop, source);
-				return;
 			}
 			current_gain = target_gain;
-			current_pan = target_pan;
 			fade_rate = 0.f;
-			pan_rate = 0.f;
 		}
 		CHECK_OPENAL_ERROR(alSourcef, source, AL_GAIN, current_gain * volume);
-		// Panning is simulated by moving the sound source on a unit circle on the horizontal plane
-		CHECK_OPENAL_ERROR(alSource3f, source, AL_POSITION, current_pan, std::sqrt(1 - current_pan * current_pan), 0.F);
 	}
 }
 
 void Sound::AlAudioBackend::SoundEvent::SetGain(float gain)
 {
-	SetGain(gain, gain);
-}
-
-void Sound::AlAudioBackend::SoundEvent::SetGain(float gainL, float gainR)
-{
-	current_gain = target_gain = (gainL + gainR) * 0.5f;
-	current_pan = target_pan = calculate_pan(gainL, gainR);
+	current_gain = gain;
 	fade_rate = 0.f;
-	pan_rate = 0.f;
 	CHECK_OPENAL_ERROR(alSourcef, source, AL_GAIN, current_gain * volume);
-	if (target_pan != 0.f) {
-		CHECK_OPENAL_ERROR(alSource3f, source, AL_POSITION, current_pan, 0.f, 0.f);
-	}
 }
 
 void Sound::AlAudioBackend::SoundEvent::SetVolume(float vol)
@@ -464,17 +438,8 @@ void Sound::AlAudioBackend::SoundEvent::SetOp(Op new_op)
 
 void Sound::AlAudioBackend::SoundEvent::SetTargetGain(float gain, float rate)
 {
-	SetTargetGain(gain, gain, rate);
-}
-
-void Sound::AlAudioBackend::SoundEvent::SetTargetGain(float gainL, float gainR, float rate)
-{
-	target_gain = (gainL + gainR) * 0.5f;
+	target_gain = gain;
 	fade_rate = rate;
-	target_pan = calculate_pan(gainL, gainR);
-	float current_pan, y, z;
-	CHECK_OPENAL_ERROR(alGetSource3f, source, AL_POSITION, &current_pan, &y, &z);
-	pan_rate = rate * (target_pan - current_pan);
 }
 
 #endif

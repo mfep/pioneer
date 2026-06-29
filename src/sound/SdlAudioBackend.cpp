@@ -139,29 +139,29 @@ bool Sound::SdlAudioBackend::EventSetOp(eventid eid, Op op)
 	return ret;
 }
 
-bool Sound::SdlAudioBackend::EventVolumeAnimate(eventid eid, const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2)
+bool Sound::SdlAudioBackend::EventVolumeAnimate(eventid eid, const float targetVol, const float dv_dt)
 {
 	AudioDeviceGuard guard(m_audioDevice);
 	SoundEvent *ev = GetEvent(eid);
 	if (ev) {
-		ev->targetVolume[0] = targetVol1;
-		ev->targetVolume[1] = targetVol2;
-		ev->rateOfChange[0] = dv_dt1 / float(FREQ);
-		ev->rateOfChange[1] = dv_dt2 / float(FREQ);
+		ev->targetVolume[0] = targetVol;
+		ev->targetVolume[1] = targetVol;
+		ev->rateOfChange[0] = dv_dt / float(FREQ);
+		ev->rateOfChange[1] = dv_dt / float(FREQ);
 	}
 	return (ev != nullptr);
 }
 
-bool Sound::SdlAudioBackend::EventSetVolume(eventid eid, const float vol_left, const float vol_right)
+bool Sound::SdlAudioBackend::EventSetVolume(eventid eid, const float vol)
 {
 	AudioDeviceGuard guard(m_audioDevice);
 	bool status = false;
 	for (unsigned int i = 0; i < MAX_WAVSTREAMS; i++) {
 		if (wavstream[i].sample && (wavstream[i].identifier == eid)) {
-			wavstream[i].volume[0] = vol_left;
-			wavstream[i].volume[1] = vol_right;
-			wavstream[i].targetVolume[0] = vol_left;
-			wavstream[i].targetVolume[1] = vol_right;
+			wavstream[i].volume[0] = vol;
+			wavstream[i].volume[1] = vol;
+			wavstream[i].targetVolume[0] = vol;
+			wavstream[i].targetVolume[1] = vol;
 			status = true;
 			break;
 		}

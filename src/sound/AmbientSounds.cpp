@@ -95,7 +95,7 @@ void AmbientSounds::Update()
 			// just use a random station noise until we have a
 			// concept of 'station size'
 			s_stationNoise.Play(s_stationNoiseSounds[Pi::player->GetDockedWith()->GetSystemBody()->GetSeed() % NUM_STATION_SOUNDS],
-				0.3f * v_env, 0.3f * v_env, Sound::OP_REPEAT);
+				0.3f * v_env, Sound::OP_REPEAT);
 		}
 	} else if (Pi::player->GetFlightState() == Ship::LANDED) {
 		/* Planet surface noise on rough-landing */
@@ -126,7 +126,7 @@ void AmbientSounds::Update()
 			}
 
 			if (sample) {
-				s_planetSurfaceNoise.Play(sample, 0.3f * v_env, 0.3f * v_env, Sound::OP_REPEAT);
+				s_planetSurfaceNoise.Play(sample, 0.3f * v_env, Sound::OP_REPEAT);
 			}
 		}
 	} else if (s_planetSurfaceNoise.IsPlaying()) {
@@ -193,8 +193,8 @@ void AmbientSounds::Update()
 				default: sample = 0; break;
 				}
 				if (sample) {
-					s_starNoise.Play(sample, 0.0f, 0.0f, Sound::OP_REPEAT);
-					s_starNoise.VolumeAnimate(.3f * v_env, .3f * v_env, .05f, .05f);
+					s_starNoise.Play(sample, 0.0f, Sound::OP_REPEAT);
+					s_starNoise.VolumeAnimate(.3f * v_env, .05f);
 				} else {
 					// go up orbital hierarchy tree to see if we can find a sound
 					FrameId parent = f->GetParent();
@@ -223,11 +223,9 @@ void AmbientSounds::Update()
 			for (int i = 0; i < eMaxNumAtmosphereSounds; i++) {
 				const float volume = volumes[i];
 				if (s_atmosphereNoises[i].IsPlaying()) {
-					const float target[2] = { volume, volume };
-					const float dv_dt[2] = { 1.0f, 1.0f };
-					s_atmosphereNoises[i].VolumeAnimate(target, dv_dt);
+					s_atmosphereNoises[i].VolumeAnimate(volume, 1.0f);
 				} else {
-					s_atmosphereNoises[i].Play(s_airflowTable[i], volume, volume, Sound::OP_REPEAT);
+					s_atmosphereNoises[i].Play(s_airflowTable[i], volume, Sound::OP_REPEAT);
 				}
 			}
 		} else {
@@ -241,12 +239,12 @@ void AmbientSounds::Update()
 void AmbientSounds::UpdateForCamType()
 {
 	const ShipViewController::CamType cam = Pi::game->GetWorldView()->shipView->GetCamType();
-	float v_env = (cam == ShipViewController::CAM_EXTERNAL ? 1.0f : 0.5f) * Sound::GetSfxVolume();
+	float v_env = (cam == ShipViewController::CAM_EXTERNAL ? 1.0f : 0.5f);
 
 	if (s_stationNoise.IsPlaying())
-		s_stationNoise.SetVolume(0.3f * v_env, 0.3f * v_env);
+		s_stationNoise.SetVolume(0.3f * v_env);
 	if (s_starNoise.IsPlaying())
-		s_starNoise.SetVolume(0.3f * v_env, 0.3f * v_env);
+		s_starNoise.SetVolume(0.3f * v_env);
 	if (s_planetSurfaceNoise.IsPlaying())
-		s_planetSurfaceNoise.SetVolume(0.3f * v_env, 0.3f * v_env);
+		s_planetSurfaceNoise.SetVolume(0.3f * v_env);
 }

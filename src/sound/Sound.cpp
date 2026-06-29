@@ -296,10 +296,10 @@ namespace Sound {
 		m_backend->Pause(on);
 	}
 
-	void Event::Play(const char *fx, float volume_left, float volume_right, Op op)
+	void Event::Play(const char *fx, float volume, Op op)
 	{
 		Stop();
-		eid = m_backend->Play(fx, volume_left, op);
+		eid = m_backend->Play(fx, volume, op);
 	}
 
 	void Event::PlayMusic(const char *fx, float volume, float fadeDelta, bool repeat, Event *fadeOut)
@@ -315,7 +315,7 @@ namespace Sound {
 		float start = fadeDelta ? 0.0f : volume;
 		eid = m_backend->Play(fx, start, repeat ? Sound::OP_REPEAT : 0);
 		if (fadeDelta) {
-			VolumeAnimate(volume, volume, fadeDelta, fadeDelta);
+			VolumeAnimate(volume, fadeDelta);
 		}
 	}
 
@@ -334,19 +334,19 @@ namespace Sound {
 		return m_backend->EventSetOp(eid, op);
 	}
 
-	bool Event::VolumeAnimate(const float targetVol1, const float targetVol2, const float dv_dt1, const float dv_dt2)
+	bool Event::VolumeAnimate(const float targetVol, const float dv_dt)
 	{
-		return m_backend->EventVolumeAnimate(eid, targetVol1, targetVol2, dv_dt1, dv_dt2);
+		return m_backend->EventVolumeAnimate(eid, targetVol, dv_dt);
 	}
 
-	bool Event::SetVolume(const float vol_left, const float vol_right)
+	bool Event::SetVolume(const float vol)
 	{
-		return m_backend->EventSetVolume(eid, vol_left, vol_right);
+		return m_backend->EventSetVolume(eid, vol);
 	}
 
 	bool Event::FadeOut(float dv_dt, Op op)
 	{
-		bool found = m_backend->EventVolumeAnimate(eid, 0.0f, 0.0f, dv_dt, dv_dt);
+		bool found = m_backend->EventVolumeAnimate(eid, 0.0f, dv_dt);
 		if (found)
 			m_backend->EventSetOp(eid, op | Sound::OP_STOP_AT_TARGET_VOLUME);
 		return found;

@@ -969,37 +969,37 @@ void Ship::TimeStepUpdate(const float timeStep)
 
 void Ship::DoThrusterSounds() const
 {
-	// XXX any ship being the current camera body should emit sounds
-	// also, ship sounds could be split to internal and external sounds
+	// // XXX any ship being the current camera body should emit sounds
+	// // also, ship sounds could be split to internal and external sounds
 
-	// XXX sound logic could be part of a bigger class (ship internal sounds)
-	/* Ship engine noise. less loud inside */
-	float v_env = (Pi::game->GetWorldView()->shipView->IsExteriorView() ? 1.0f : 0.5f);
-	static Sound::Event sndev;
-	float volBoth = 0.0f;
-	volBoth += 0.5f * fabs(m_propulsion->GetLinThrusterState().y);
-	volBoth += 0.5f * fabs(m_propulsion->GetLinThrusterState().z);
+	// // XXX sound logic could be part of a bigger class (ship internal sounds)
+	// /* Ship engine noise. less loud inside */
+	// float v_env = (Pi::game->GetWorldView()->shipView->IsExteriorView() ? 1.0f : 0.5f);
+	// static Sound::Event sndev;
+	// float volBoth = 0.0f;
+	// volBoth += 0.5f * fabs(m_propulsion->GetLinThrusterState().y);
+	// volBoth += 0.5f * fabs(m_propulsion->GetLinThrusterState().z);
 
-	float targetVol[2] = { volBoth, volBoth };
-	if (m_propulsion->GetLinThrusterState().x > 0.0)
-		targetVol[0] += 0.5f * float(m_propulsion->GetLinThrusterState().x);
-	else
-		targetVol[1] += -0.5f * float(m_propulsion->GetLinThrusterState().x);
+	// float targetVol[2] = { volBoth, volBoth };
+	// if (m_propulsion->GetLinThrusterState().x > 0.0)
+	// 	targetVol[0] += 0.5f * float(m_propulsion->GetLinThrusterState().x);
+	// else
+	// 	targetVol[1] += -0.5f * float(m_propulsion->GetLinThrusterState().x);
 
-	targetVol[0] = v_env * Clamp(targetVol[0], 0.0f, 1.0f);
-	targetVol[1] = v_env * Clamp(targetVol[1], 0.0f, 1.0f);
-	float dv_dt[2] = { 4.0f, 4.0f };
-	if (!sndev.VolumeAnimate(targetVol, dv_dt)) {
-		sndev.Play("Thruster_large", 0.0f, 0.0f, Sound::OP_REPEAT);
-		sndev.VolumeAnimate(targetVol, dv_dt);
-	}
-	float angthrust = 0.1f * v_env * float(m_propulsion->GetAngThrusterState().Length());
+	// targetVol[0] = v_env * Clamp(targetVol[0], 0.0f, 1.0f);
+	// targetVol[1] = v_env * Clamp(targetVol[1], 0.0f, 1.0f);
+	// float dv_dt[2] = { 4.0f, 4.0f };
+	// if (!sndev.VolumeAnimate(targetVol, dv_dt)) {
+	// 	sndev.Play("Thruster_large", 0.0f, 0.0f, Sound::OP_REPEAT);
+	// 	sndev.VolumeAnimate(targetVol, dv_dt);
+	// }
+	// float angthrust = 0.1f * v_env * float(m_propulsion->GetAngThrusterState().Length());
 
-	static Sound::Event angThrustSnd;
-	if (!angThrustSnd.VolumeAnimate(angthrust, angthrust, 5.0f, 5.0f)) {
-		angThrustSnd.Play("Thruster_Small", 0.0f, 0.0f, Sound::OP_REPEAT);
-		angThrustSnd.VolumeAnimate(angthrust, angthrust, 5.0f, 5.0f);
-	}
+	// static Sound::Event angThrustSnd;
+	// if (!angThrustSnd.VolumeAnimate(angthrust, angthrust, 5.0f, 5.0f)) {
+	// 	angThrustSnd.Play("Thruster_Small", 0.0f, 0.0f, Sound::OP_REPEAT);
+	// 	angThrustSnd.VolumeAnimate(angthrust, angthrust, 5.0f, 5.0f);
+	// }
 }
 
 // for timestep changes, to stop autopilot overshoot
@@ -1252,32 +1252,7 @@ void Ship::StaticUpdate(const float timeStep)
 	// lasers
 	GetComponent<GunManager>()->StaticUpdate(timeStep);
 
-	// TODO: this is abominable.
-	// It will lead to multiple sound cutouts with more than a single beam laser
-	// Unfortunately, I don't have the time or inclination to completely rewrite the sound system at this juncture
-
 	GunManager::WeaponIndexSet firedGuns = m_gunManager->GetGunsFiredThisFrame();
-	GunManager::WeaponIndexSet stoppedGuns = m_gunManager->GetGunsStoppedThisFrame();
-
-	for (size_t i = 0; i < m_gunManager->GetNumWeapons(); i++) {
-		const GunManager::WeaponState *ws = m_gunManager->GetWeaponState(i);
-		if (ws->data.projectileType == GunManager::PROJECTILE_BEAM) {
-			if (m_gunManager->GetWeaponGroups()[ws->group].firing) {
-				float vl, vr;
-				Sound::CalculateStereo(this, 1.0f, &vl, &vr);
-				if (firedGuns[i]) {
-					m_beamLaser[i % 2].Play("Beam_laser", vl, vr, Sound::OP_REPEAT);
-				} else {
-					// update volume
-					m_beamLaser[i % 2].SetVolume(vl, vr);
-				}
-			} else if (stoppedGuns[i]) {
-				m_beamLaser[i % 2].Stop();
-			}
-		} else if (firedGuns[i]) {
-			Sound::BodyMakeNoise(this, "Pulse_Laser", 1.0f);
-		}
-	}
 
 	if (firedGuns.any())
 		LuaEvent::Queue("onShipFiring", this);
